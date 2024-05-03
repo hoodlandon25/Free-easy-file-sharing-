@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Sharing Website</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold text-center mb-8">File Sharing Website</h1>
+
+        <div class="flex items-center justify-center space-x-4 mb-8">
+            <input type="file" id="fileInput" class="border border-gray-300 rounded-lg px-4 py-2 w-64">
+            <button id="uploadBtn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Upload</button>
+        </div>
+
+        <div id="fileList" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+    </div>
+
+    <script>
+        document.getElementById('uploadBtn').addEventListener('click', function() {
+            const fileInput = document.getElementById('fileInput');
+            const fileList = document.getElementById('fileList');
+
+            const file = fileInput.files[0];
+            if (file) {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'relative bg-white p-4 rounded shadow';
+                const fileURL = URL.createObjectURL(file); // Generate file URL
+                fileItem.innerHTML = `
+                    <h3 class="font-bold">${file.name}</h3>
+                    <div class="flex justify-end">
+                        <div class="dropdown inline-block relative">
+                            <button class="text-gray-600 hover:text-gray-900 focus:outline-none" id="optionsMenu">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M3 10a1 1 0 0 1 1-1h12a1 1 0 0 1 0 2H4a1 1 0 0 1-1-1zm4 0a1 1 0 0 1 1-1h8a1 1 0 0 1 0 2H8a1 1 0 0 1-1-1zm3 0a1 1 0 0 1 1-1h2a1 1 0 0 1 0 2h-2a1 1 0 0 1-1-1z"/>
+                                </svg>
+                            </button>
+                            <ul class="dropdown-menu absolute hidden text-gray-700 pt-1 w-32 bg-white border border-gray-300 rounded shadow">
+                                <li><a href="#" class="block px-4 py-2 text-sm text-gray-900 hover:bg-gray-200" id="copyUrl">Copy URL</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <p class="text-gray-500">${(file.size / (1024*1024)).toFixed(2)} MB</p>
+                `;
+                fileList.appendChild(fileItem);
+
+                document.getElementById('optionsMenu').addEventListener('click', function() {
+                    document.querySelector('.dropdown-menu').classList.toggle('hidden');
+                });
+
+                document.getElementById('copyUrl').addEventListener('click', function() {
+                    navigator.clipboard.writeText(fileURL).then(function() {
+                        alert('File URL copied to clipboard');
+                    }).catch(function(error) {
+                        console.error('Failed to copy: ', error);
+                    });
+                });
+            } else {
+                alert('Please select a file to upload');
+            }
+        });
+    </script>
+</body>
+</html>
